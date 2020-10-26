@@ -15,42 +15,60 @@ export default class Recipe extends React.Component {
     var recipe = null
     try {
       recipe = await mealdb.getRecipe(this.props.match.params.recipeId)
-    } catch(e) {
+    } catch (e) {
       recipe = null
     }
     this.setState({ recipe, isLoading: false })
   }
 
+  compoartir = (e) => {
+    e.preventDefault()
+    if (!navigator.share) {
+      alert('Tu browser no soporta la Web Share API')
+      return;
+    }
+
+    const { recipe } = this.state
+    navigator.share({
+      title: `${recipe.name}`,
+      text: 'Receta de Platzi',
+      url: document.location.href
+    })
+      .then(() => alert('Contenido compartido'))
+      .catch((err) => alert('Hubo un error'))
+  }
+
   render() {
     const { recipe, isLoading } = this.state
 
-    if( isLoading ) {
+    if (isLoading) {
       return <div className="message">Cargando...</div>
     }
-    else if( recipe === null ) {
+    else if (recipe === null) {
       return <div className="message">Hubo un problema :(</div>
     }
 
     return <div className="Recipe">
       <Helmet>
-        <title>{ recipe.name }</title>
+        <title>{recipe.name}</title>
       </Helmet>
 
       <div className="hero" style={{ backgroundImage: `url(${recipe.thumbnail})` }} />
-      
+
       <div className="title">
         <div className="info">
-          <h1>{ recipe.name }</h1>
-          <p>{ recipe.origin }</p>
+          <h1>{recipe.name}</h1>
+          <p>{recipe.origin}</p>
         </div>
         <div>
         </div>
+        <a onClick={this.compartir}>Compartir</a>
       </div>
 
 
-      <RecipeIngredients ingredients={ recipe.ingredients } />
+      <RecipeIngredients ingredients={recipe.ingredients} />
 
-      <RecipeInstructions instructions={ recipe.instructions } />
+      <RecipeInstructions instructions={recipe.instructions} />
 
     </div>
   }

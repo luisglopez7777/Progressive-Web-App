@@ -1,14 +1,31 @@
 import 'isomorphic-fetch'
 
-const baseUrl = 'https://www.themealdb.com/api/json/v1/1'
+// const baseUrl = 'https://www.themealdb.com/api/json/v1/1'
+const baseUrl = "https://www.themealdb.com/api/json/v1/1";
 
 export default {
   getLatest,
   getRecipe
 }
 
+// async function getLatest() {
+//   const request = await fetch(`${baseUrl}/latest.php`)
+//   const data = await request.json()
+//   const recipes = data.meals.map((m) => normalizeMeal(m))
+
+//   return recipes
+// }
+
+// async function getRecipe(recipeId) {
+//   const request = await fetch(`${baseUrl}/lookup.php?i=${recipeId}`)
+//   const data = await request.json()
+//   if (!data.meals) return null
+//   const recipe = normalizeMeal(data.meals.shift())
+
+//   return recipe
+// }
 async function getLatest() {
-  const request = await fetch(`${baseUrl}/latest.php`)
+  const request = await fetch(`${baseUrl}/search.php?f=b`);
   const data = await request.json()
   const recipes = data.meals.map((m) => normalizeMeal(m))
 
@@ -18,7 +35,7 @@ async function getLatest() {
 async function getRecipe(recipeId) {
   const request = await fetch(`${baseUrl}/lookup.php?i=${recipeId}`)
   const data = await request.json()
-  if( ! data.meals ) return null
+  if (!data.meals) return null
   const recipe = normalizeMeal(data.meals.shift())
 
   return recipe
@@ -39,8 +56,8 @@ function normalizeMeal(meal) {
   newMeal.url = meal.strSource
   newMeal.dateModified = meal.dateModified
 
-  for( let i=1; i<=20; i++ ) {
-    if( meal[`strIngredient${i}`] !== '' && meal[`strMeasure${i}`] !== '' ) {
+  for (let i = 1; i <= 20; i++) {
+    if (meal[`strIngredient${i}`] !== '' && meal[`strMeasure${i}`] !== '') {
       newMeal.ingredients.push({
         ingredient: meal[`strIngredient${i}`],
         measure: meal[`strMeasure${i}`]
